@@ -2,6 +2,7 @@
 <html lang="uz">
 <head>
 <meta charset="utf-8">
+<script>document.documentElement.className+=' js'</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#14264a">
@@ -100,6 +101,39 @@ h2{font:800 clamp(26px,6vw,38px)/1.15 "Unbounded",sans-serif;margin:0 0 18px;let
 .scene .cf{opacity:0;transform-box:fill-box;transform-origin:center;animation:cf 12s ease-out infinite}
 @keyframes cf{0%,69%{opacity:0;transform:translate(0,0) rotate(0)}71%{opacity:1}96%{opacity:0;transform:translate(var(--x),120px) rotate(540deg)}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.scene *{animation:none!important}.scene .walker{display:none}}
+.btn{position:relative;overflow:hidden;transition:transform .15s,box-shadow .2s}
+.btn:hover{transform:translateY(-3px);box-shadow:0 8px 18px rgba(242,182,50,.45)}
+.btn:active{transform:scale(.95)}
+.btn::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);animation:shine 3.2s ease-in-out infinite}
+@keyframes shine{0%,60%{left:-60%}100%{left:130%}}
+.hero .wrap{position:relative;z-index:1}
+.fall{position:absolute;top:-24px;color:#f2b632;pointer-events:none;opacity:0;animation:fall linear infinite}
+@keyframes fall{0%{transform:translateY(0) rotate(0);opacity:0}10%{opacity:.9}90%{opacity:.7}100%{transform:translateY(var(--h,420px)) rotate(360deg);opacity:0}}
+.cur{color:#f2b632;animation:blink .8s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.js .pop{opacity:0}
+.js .pop.in{animation:pop .6s cubic-bezier(.2,1.4,.4,1) both;animation-delay:var(--d,0s)}
+@keyframes pop{from{opacity:0;transform:translateY(28px) scale(.85)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.btn::after,.fall,.cur{animation:none}.js .pop{opacity:1}.js .pop.in{animation:none}}
+.team .member{background:none;border:0;padding:0;perspective:900px;cursor:pointer}
+.mi{display:grid;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.member.open .mi{transform:rotateY(180deg)}
+.face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.face.back{transform:rotateY(180deg);background:var(--hero);border-color:var(--hero)}
+.team .back p{display:block;margin:0;color:#e6ebfa;font-size:14px;line-height:1.45}
+@media (max-width:560px){.face{padding:14px 10px}.team .back p{font-size:12.5px}}
+.ring::before{content:"📞 ";display:inline-block;animation:ringing .4s ease-in-out infinite}
+@keyframes ringing{0%,100%{transform:rotate(-18deg)}50%{transform:rotate(18deg)}}
+.tilt{transition:transform .18s ease-out;will-change:transform}
+.gallery figure{cursor:zoom-in}
+.lb{position:fixed;inset:0;z-index:100;background:rgba(6,12,28,.93);display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:16px;opacity:0;transition:opacity .25s}
+.lb.on{display:flex}.lb.show{opacity:1}
+.lb img{max-width:100%;max-height:76vh;border-radius:14px;transform:scale(.85);transition:transform .35s cubic-bezier(.2,1.2,.4,1)}
+.lb.show img{transform:none}
+.lb p{color:#fff;font-weight:700;margin:0;text-align:center}
+.lbx,.lbn{position:absolute;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:28px;line-height:1;width:46px;height:46px;border-radius:50%;cursor:pointer}
+.lbx{top:calc(14px + env(safe-area-inset-top,0px));right:14px}
+.lbp{left:10px;top:50%}.lbq{right:10px;top:50%}
 dialog{border:0;border-radius:20px;background:var(--surface);color:var(--ink);padding:30px 28px;max-width:min(400px,calc(100vw - 40px));text-align:center}
 dialog::backdrop{background:rgba(10,18,38,.65)}
 dialog h3{font:800 22px/1.2 "Unbounded",sans-serif;margin:0 0 12px}
@@ -278,6 +312,70 @@ document.querySelectorAll('.member').forEach(function(m){
   m.addEventListener('click',t);
   m.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}});
 });
+(function(){
+  var rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var h=document.querySelector('.hero h1');
+  if(h&&!rm){
+    var L=['“Liderlar”','guruhi'];h.setAttribute('aria-label','“Liderlar” guruhi');h.style.minHeight=h.offsetHeight+'px';h.textContent='';
+    var t1=document.createTextNode(''),t2=document.createTextNode(''),cur=document.createElement('span');cur.className='cur';cur.textContent='|';
+    h.appendChild(t1);h.appendChild(document.createElement('br'));h.appendChild(t2);h.appendChild(cur);
+    var n=0,tot=L[0].length+L[1].length;
+    var iv=setInterval(function(){n++;t1.nodeValue=L[0].slice(0,Math.min(n,L[0].length));t2.nodeValue=L[1].slice(0,Math.max(0,n-L[0].length));if(n>=tot){clearInterval(iv);setTimeout(function(){cur.remove()},1200)}},90);
+  }
+  var hero=document.querySelector('header.hero');
+  if(hero&&!rm){for(var k=0;k<16;k++){var e=document.createElement('span');e.className='fall';e.textContent='★';e.style.left=(Math.random()*96)+'%';e.style.fontSize=(10+Math.random()*16)+'px';e.style.animationDuration=(5+Math.random()*6)+'s';e.style.animationDelay=(-Math.random()*10)+'s';e.style.setProperty('--h',hero.offsetHeight+'px');hero.appendChild(e)}}
+  if(!rm&&'IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}})},{threshold:.15});
+    document.querySelectorAll('.member,.act,.value,.ncard,.best').forEach(function(el){el.classList.add('pop');el.style.setProperty('--d',(Array.prototype.indexOf.call(el.parentNode.children,el)%4)*0.09+'s');io.observe(el)});
+  }
+})();
+(function(){
+  var rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.member').forEach(function(m){
+    var av=m.querySelector('.avatar'),b=m.querySelector('b'),sp=m.querySelector('span'),p=m.querySelector('p');
+    if(!av||!b||!sp||!p)return;
+    var inner=document.createElement('div');inner.className='mi';
+    var f=document.createElement('div');f.className='face front';f.appendChild(av);f.appendChild(b);f.appendChild(sp);
+    var k=document.createElement('div');k.className='face back';k.appendChild(p);
+    inner.appendChild(f);inner.appendChild(k);m.appendChild(inner);
+  });
+  var num='+998 91 633 36 81',a=document.querySelector('.contacts a[href^="tel:"]');
+  if(a&&!rm&&'IntersectionObserver' in window){
+    a.setAttribute('aria-label','Qo‘ng‘iroq qilish: '+num);
+    a.innerHTML='Qo‘ng‘iroq qilish: <span class="tp"></span><span class="rs" style="visibility:hidden">'+num+'</span>';
+    var tp=a.querySelector('.tp'),rs=a.querySelector('.rs');
+    var io2=new IntersectionObserver(function(es){
+      if(!es[0].isIntersecting)return;io2.disconnect();a.classList.add('ring');var i=0;
+      var t=setInterval(function(){i++;tp.textContent=num.slice(0,i);rs.textContent=num.slice(i);if(i>=num.length){clearInterval(t);a.classList.remove('ring')}},130);
+    },{threshold:.6});
+    io2.observe(a);
+    var io3=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io3.unobserve(x.target)}})},{threshold:.3});
+    document.querySelectorAll('.contacts>span').forEach(function(el,i){el.classList.add('pop');el.style.setProperty('--d',(0.5+i*0.25)+'s');io3.observe(el)});
+  }
+})();
+(function(){
+  document.addEventListener('animationend',function(e){if(e.animationName==='pop'){e.target.classList.remove('pop','in');e.target.style.removeProperty('--d')}});
+  document.querySelectorAll('.act,.ncard,.best').forEach(function(el){
+    el.classList.add('tilt');
+    el.addEventListener('pointermove',function(e){var r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;el.style.transform='perspective(700px) rotateY('+(x*14)+'deg) rotateX('+(-y*14)+'deg) scale(1.02)'});
+    ['pointerleave','pointercancel','pointerup'].forEach(function(t){el.addEventListener(t,function(){el.style.transform=''})});
+  });
+  var figs=[].slice.call(document.querySelectorAll('.gallery figure')),cur=0;
+  if(!figs.length)return;
+  var lb=document.createElement('div');lb.className='lb';lb.setAttribute('role','dialog');lb.setAttribute('aria-modal','true');lb.setAttribute('aria-label','Rasm');
+  lb.innerHTML='<button class="lbx" type="button" aria-label="Yopish">\u00d7</button><button class="lbn lbp" type="button" aria-label="Oldingi">\u2039</button><img alt=""><p></p><button class="lbn lbq" type="button" aria-label="Keyingi">\u203a</button>';
+  document.body.appendChild(lb);
+  var im=lb.querySelector('img'),cp=lb.querySelector('p'),px=document.documentElement;
+  function show(i){cur=(i+figs.length)%figs.length;var f=figs[cur];im.src=f.querySelector('img').src;im.alt=f.querySelector('img').alt;cp.textContent=f.querySelector('figcaption').textContent}
+  function open(i){show(i);lb.classList.add('on');px.style.overflow='hidden';requestAnimationFrame(function(){lb.classList.add('show')});lb.querySelector('.lbx').focus()}
+  function close(){lb.classList.remove('show');px.style.overflow='';setTimeout(function(){lb.classList.remove('on')},250)}
+  figs.forEach(function(f,i){f.tabIndex=0;f.setAttribute('role','button');f.addEventListener('click',function(){open(i)});f.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open(i)}})});
+  lb.addEventListener('click',function(e){if(e.target===lb)close()});
+  lb.querySelector('.lbx').addEventListener('click',close);
+  lb.querySelector('.lbp').addEventListener('click',function(){show(cur-1)});
+  lb.querySelector('.lbq').addEventListener('click',function(){show(cur+1)});
+  document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')close();if(e.key==='ArrowLeft')show(cur-1);if(e.key==='ArrowRight')show(cur+1)});
+})();
 </script>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}</script>
 </body>
